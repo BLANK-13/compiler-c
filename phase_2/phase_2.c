@@ -1,12 +1,19 @@
 #include <stdio.h>
 #include <ctype.h>
+
+//tokens definition
+#define NUM 256
+
 int lookahead;
+int lineNo = 1;
+int tokenVal;
 
 void expr(void);
 void rest(void);
 void term(void);
 void match(int);
 void error(void);
+int lexan(void);
 
 void expr(void){
 	term();
@@ -26,13 +33,32 @@ void expr(void){
 	}
 	
 void term (void){
-	if (isdigit(lookahead)){
-		putchar(lookahead);
-		putchar(' ');
-		match(lookahead);
+	if (lookahead==NUM){
+		printf("%d ", tokenVal);
+		match(NUM);
 	}else{
 		error();
 	}
+}
+
+int lexan(){
+    int t;
+    while(1){
+        t = getchar();
+        if(t ==' ' || t =='\t');
+        else if (t == '\n')lineNo++;
+        else if (isdigit(t)){
+			ungetc(t, stdin);
+			scanf("%d", &tokenVal);
+			fflush(stdin);
+			fflush(stdin);			
+			
+			return NUM;
+			
+			}
+			
+		else return t;
+    }
 }	
 
 
@@ -53,16 +79,17 @@ void rest(void){
 
 void match(int token){
 	if (lookahead == token){
-		lookahead = getchar();
+		lookahead = lexan();
 	}
 	else error();
 }
+
 void error(void){
 printf("syntax error\n");
 exit(1);	
 }
 
 int main() {
-   lookahead = getchar();
+   lookahead = lexan();
    expr();
-}
+   }
